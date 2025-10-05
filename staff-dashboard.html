@@ -1,0 +1,749 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Staff Dashboard - The Caravan Chronicle</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* CSS Variables */
+        :root {
+            --primary: #8B4513;
+            --secondary: #D2691E;
+            --accent: #FFD700;
+            --light: #F5F5DC;
+            --dark: #3E2723;
+            --success: #4CAF50;
+            --warning: #FF9800;
+            --danger: #F44336;
+            --info: #2196F3;
+            --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            --transition: all 0.3s ease;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: var(--light);
+            min-height: 100vh;
+            color: var(--dark);
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: var(--shadow);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-left: 5px solid var(--primary);
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .logo i {
+            font-size: 2.5rem;
+            color: var(--accent);
+        }
+
+        .logo h1 {
+            color: var(--primary);
+            font-size: 1.8rem;
+        }
+
+       
+        .staff-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .staff-welcome {
+            text-align: right;
+        }
+
+        .staff-welcome strong {
+            color: var(--primary);
+        }
+
+        .logout-btn {
+            background: var(--danger);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: var(--transition);
+        }
+
+        .logout-btn:hover {
+            background: #c0392b;
+            transform: translateY(-2px);
+        }
+
+        .dashboard-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: var(--shadow);
+            text-align: center;
+            border-top: 4px solid var(--primary);
+            transition: var(--transition);
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: var(--primary);
+            margin-bottom: 10px;
+        }
+
+        .stat-label {
+            color: var(--dark);
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 300px;
+            gap: 20px;
+        }
+
+        .complaints-section {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: var(--shadow);
+        }
+
+        .section-title {
+            color: var(--primary);
+            margin-bottom: 20px;
+            font-size: 1.5rem;
+            border-bottom: 2px solid var(--accent);
+            padding-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .filters {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .filter-select {
+            padding: 10px 15px;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            background: white;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .filter-select:focus {
+            border-color: var(--primary);
+            outline: none;
+        }
+
+        .complaints-list {
+            max-height: 600px;
+            overflow-y: auto;
+            padding-right: 10px;
+        }
+
+        .complaints-list::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .complaints-list::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+
+        .complaints-list::-webkit-scrollbar-thumb {
+            background: var(--primary);
+            border-radius: 10px;
+        }
+
+        .complaint-item {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 15px;
+            border-left: 4px solid var(--info);
+            transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .complaint-item::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(139, 69, 19, 0.05), transparent);
+            transition: 0.5s;
+        }
+
+        .complaint-item:hover::before {
+            left: 100%;
+        }
+
+        .complaint-item:hover {
+            transform: translateX(5px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .complaint-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 10px;
+        }
+
+        .complaint-id {
+            font-weight: bold;
+            color: var(--primary);
+            font-size: 1.1rem;
+        }
+
+        .status-badge {
+            padding: 5px 12px;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            font-weight: bold;
+        }
+
+        .status-pending {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .status-in-progress {
+            background: #cce7ff;
+            color: #004085;
+        }
+
+        .status-resolved {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .complaint-details {
+            color: #666;
+            margin-bottom: 15px;
+            line-height: 1.5;
+        }
+
+        .complaint-meta {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 10px;
+            margin-bottom: 15px;
+            font-size: 0.9rem;
+        }
+
+        .meta-item {
+            background: white;
+            padding: 10px;
+            border-radius: 5px;
+            text-align: center;
+            border: 1px solid #e9ecef;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .action-btn {
+            padding: 8px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: var(--transition);
+            font-weight: 600;
+        }
+
+        .action-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 3px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .btn-progress {
+            background: var(--info);
+            color: white;
+        }
+
+        .btn-resolve {
+            background: var(--success);
+            color: white;
+        }
+
+        .btn-pending {
+            background: var(--warning);
+            color: white;
+        }
+
+        .sidebar {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: var(--shadow);
+            height: fit-content;
+        }
+
+        .quick-stats {
+            margin-bottom: 25px;
+        }
+
+        .stat-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid #e9ecef;
+            transition: var(--transition);
+        }
+
+        .stat-item:hover {
+            background: #f8f9fa;
+            padding-left: 10px;
+            border-radius: 5px;
+        }
+
+        .stat-item:last-child {
+            border-bottom: none;
+        }
+
+        .stat-count {
+            font-weight: bold;
+            color: var(--primary);
+        }
+
+        .site-distribution {
+            margin-top: 25px;
+        }
+
+        .site-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 0;
+            border-bottom: 1px solid #e9ecef;
+            transition: var(--transition);
+        }
+
+        .site-item:hover {
+            background: #f8f9fa;
+            padding-left: 10px;
+            border-radius: 5px;
+        }
+
+        .site-item:last-child {
+            border-bottom: none;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        /* Responsive Styles */
+        @media (max-width: 768px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+            
+            .header {
+                flex-direction: column;
+                gap: 15px;
+                text-align: center;
+            }
+            
+            .staff-info {
+                flex-direction: column;
+                gap: 10px;
+            }
+            
+            .staff-welcome {
+                text-align: center;
+            }
+            
+            .filters {
+                justify-content: center;
+            }
+            
+            .action-buttons {
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="logo">
+                <i class="fas fa-tent"></i>
+                <div>
+                    <h1>The Caravan <span>Chronicle</span></h1>
+                    <p>Staff Complaint Dashboard</p>
+                </div>
+            </div>
+            <div class="staff-info">
+                <div class="staff-welcome">
+                    Welcome, <strong id="staffName">Staff Member</strong><br>
+                    <small>Last login: <span id="lastLogin">Today</span></small>
+                </div>
+                <button class="logout-btn" onclick="logout()">
+                    <i class="fas fa-sign-out-alt"></i> Logout
+                </button>
+            </div>
+        </div>
+
+        <div class="dashboard-stats">
+            <div class="stat-card">
+                <div class="stat-number" id="totalComplaints">0</div>
+                <div class="stat-label">Total Complaints</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="pendingComplaints">0</div>
+                <div class="stat-label">Pending</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="progressComplaints">0</div>
+                <div class="stat-label">In Progress</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="resolvedComplaints">0</div>
+                <div class="stat-label">Resolved</div>
+            </div>
+        </div>
+
+        <div class="main-content">
+            <div class="complaints-section">
+                <h2 class="section-title">
+                    <span>Complaint Management</span>
+                    <small style="font-size: 1rem; color: #666;">Total: <span id="complaintCount">0</span> complaints</small>
+                </h2>
+
+                <div class="filters">
+                    <select class="filter-select" id="statusFilter" onchange="filterComplaints()">
+                        <option value="all">All Status</option>
+                        <option value="pending">Pending</option>
+                        <option value="in-progress">In Progress</option>
+                        <option value="resolved">Resolved</option>
+                    </select>
+                    
+                    <select class="filter-select" id="siteFilter" onchange="filterComplaints()">
+                        <option value="all">All Sites</option>
+                        <option value="goa">Goa</option>
+                        <option value="himachal">Himachal</option>
+                        <option value="rajasthan">Rajasthan</option>
+                        <option value="kerala">Kerala</option>
+                        <option value="other">Other</option>
+                    </select>
+
+                    <select class="filter-select" id="typeFilter" onchange="filterComplaints()">
+                        <option value="all">All Types</option>
+                        <option value="facility">Facility</option>
+                        <option value="hygiene">Hygiene</option>
+                        <option value="staff">Staff</option>
+                        <option value="safety">Safety</option>
+                        <option value="booking">Booking</option>
+                        <option value="other">Other</option>
+                    </select>
+                </div>
+
+                <div class="complaints-list" id="complaintsList">
+                    <!-- Complaints will be loaded here dynamically -->
+                </div>
+            </div>
+
+            <div class="sidebar">
+                <div class="quick-stats">
+                    <h3 style="margin-bottom: 15px; color: var(--primary); border-bottom: 1px solid #e9ecef; padding-bottom: 10px;">
+                        <i class="fas fa-chart-line"></i> Quick Stats
+                    </h3>
+                    <div class="stat-item">
+                        <span>Today's Complaints</span>
+                        <span class="stat-count" id="todayCount">0</span>
+                    </div>
+                    <div class="stat-item">
+                        <span>Response Rate</span>
+                        <span class="stat-count" id="responseRate">0%</span>
+                    </div>
+                    <div class="stat-item">
+                        <span>Avg. Resolution Time</span>
+                        <span class="stat-count" id="avgResolution">-</span>
+                    </div>
+                </div>
+
+                <div class="site-distribution">
+                    <h3 style="margin-bottom: 15px; color: var(--primary); border-bottom: 1px solid #e9ecef; padding-bottom: 10px;">
+                        <i class="fas fa-map-marker-alt"></i> Complaints by Site
+                    </h3>
+                    <div id="siteDistribution">
+                        <!-- Site distribution will be loaded here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Check if staff is logged in
+        if (!localStorage.getItem('staffLoggedIn')) {
+            window.location.href = 'staff-login.html';
+        }
+
+        // Set staff name
+        document.getElementById('staffName').textContent = localStorage.getItem('staffId') || 'Staff Member';
+
+        // Initialize complaints if not exists
+        if (!localStorage.getItem('complaints')) {
+            const sampleComplaints = [
+                {
+                    id: 'TC-2024-001',
+                    name: 'John Doe',
+                    email: 'john@example.com',
+                    phone: '9876543210',
+                    site: 'goa',
+                    type: 'facility',
+                    description: 'Broken water supply in Goa site. The water tap in area A is not working since morning.',
+                    status: 'resolved',
+                    date: '2024-01-15',
+                    update: '2024-01-16'
+                },
+                {
+                    id: 'TC-2024-002',
+                    name: 'Jane Smith',
+                    email: 'jane@example.com',
+                    phone: '9876543211',
+                    site: 'himachal',
+                    type: 'hygiene',
+                    description: 'Cleaning issue in mountain site bathroom. The restrooms need immediate attention.',
+                    status: 'in-progress',
+                    date: '2024-01-16',
+                    update: '2024-01-16'
+                },
+                {
+                    id: 'TC-2024-003',
+                    name: 'Mike Johnson',
+                    email: 'mike@example.com',
+                    phone: '9876543212',
+                    site: 'rajasthan',
+                    type: 'safety',
+                    description: 'Safety concern near the desert camping area. Poor lighting at night.',
+                    status: 'pending',
+                    date: '2024-01-17',
+                    update: '2024-01-17'
+                },
+                {
+                    id: 'TC-2024-004',
+                    name: 'Sarah Wilson',
+                    email: 'sarah@example.com',
+                    phone: '9876543213',
+                    site: 'kerala',
+                    type: 'booking',
+                    description: 'Issue with booking confirmation for Kerala backwaters tour.',
+                    status: 'in-progress',
+                    date: '2024-01-18',
+                    update: '2024-01-18'
+                }
+            ];
+            localStorage.setItem('complaints', JSON.stringify(sampleComplaints));
+        }
+
+        function loadComplaints() {
+            const complaints = JSON.parse(localStorage.getItem('complaints')) || [];
+            const statusFilter = document.getElementById('statusFilter').value;
+            const siteFilter = document.getElementById('siteFilter').value;
+            const typeFilter = document.getElementById('typeFilter').value;
+
+            let filteredComplaints = complaints;
+
+            if (statusFilter !== 'all') {
+                filteredComplaints = filteredComplaints.filter(c => c.status === statusFilter);
+            }
+
+            if (siteFilter !== 'all') {
+                filteredComplaints = filteredComplaints.filter(c => c.site === siteFilter);
+            }
+
+            if (typeFilter !== 'all') {
+                filteredComplaints = filteredComplaints.filter(c => c.type === typeFilter);
+            }
+
+            displayComplaints(filteredComplaints);
+            updateStats(complaints);
+        }
+
+        function displayComplaints(complaints) {
+            const container = document.getElementById('complaintsList');
+            document.getElementById('complaintCount').textContent = complaints.length;
+
+            if (complaints.length === 0) {
+                container.innerHTML = '<div style="text-align: center; padding: 40px; color: #666;"><i class="fas fa-inbox" style="font-size: 3rem; margin-bottom: 15px; opacity: 0.5;"></i><br>No complaints found matching your filters.</div>';
+                return;
+            }
+
+            container.innerHTML = complaints.map(complaint => `
+                <div class="complaint-item">
+                    <div class="complaint-header">
+                        <div class="complaint-id">${complaint.id}</div>
+                        <div class="status-badge status-${complaint.status}">
+                            ${complaint.status.charAt(0).toUpperCase() + complaint.status.slice(1).replace('-', ' ')}
+                        </div>
+                    </div>
+                    
+                    <div class="complaint-details">
+                        <p><strong>${complaint.description}</strong></p>
+                    </div>
+                    
+                    <div class="complaint-meta">
+                        <div class="meta-item">
+                            <strong><i class="fas fa-user"></i> User:</strong><br>
+                            ${complaint.name}
+                        </div>
+                        <div class="meta-item">
+                            <strong><i class="fas fa-map-marker-alt"></i> Site:</strong><br>
+                            ${getSiteName(complaint.site)}
+                        </div>
+                        <div class="meta-item">
+                            <strong><i class="fas fa-tag"></i> Type:</strong><br>
+                            ${complaint.type.charAt(0).toUpperCase() + complaint.type.slice(1)}
+                        </div>
+                        <div class="meta-item">
+                            <strong><i class="fas fa-calendar"></i> Submitted:</strong><br>
+                            ${complaint.date}
+                        </div>
+                    </div>
+                    
+                    <div class="action-buttons">
+                        ${complaint.status !== 'in-progress' ? 
+                            `<button class="action-btn btn-progress" onclick="updateStatus('${complaint.id}', 'in-progress')">
+                                <i class="fas fa-play-circle"></i> Mark In Progress
+                            </button>` : ''}
+                        
+                        ${complaint.status !== 'resolved' ? 
+                            `<button class="action-btn btn-resolve" onclick="updateStatus('${complaint.id}', 'resolved')">
+                                <i class="fas fa-check-circle"></i> Resolve
+                            </button>` : ''}
+                        
+                        ${complaint.status !== 'pending' ? 
+                            `<button class="action-btn btn-pending" onclick="updateStatus('${complaint.id}', 'pending')">
+                                <i class="fas fa-redo"></i> Reopen
+                            </button>` : ''}
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function getSiteName(siteCode) {
+            const sites = {
+                'goa': 'Goa Beach',
+                'himachal': 'Himachal Mountains',
+                'rajasthan': 'Rajasthan Desert',
+                'kerala': 'Kerala Backwaters',
+                'other': 'Other Location'
+            };
+            return sites[siteCode] || siteCode;
+        }
+
+        function updateStats(complaints) {
+            const total = complaints.length;
+            const pending = complaints.filter(c => c.status === 'pending').length;
+            const progress = complaints.filter(c => c.status === 'in-progress').length;
+            const resolved = complaints.filter(c => c.status === 'resolved').length;
+            const today = complaints.filter(c => c.date === new Date().toISOString().split('T')[0]).length;
+
+            document.getElementById('totalComplaints').textContent = total;
+            document.getElementById('pendingComplaints').textContent = pending;
+            document.getElementById('progressComplaints').textContent = progress;
+            document.getElementById('resolvedComplaints').textContent = resolved;
+            document.getElementById('todayCount').textContent = today;
+            document.getElementById('responseRate').textContent = total > 0 ? Math.round(((progress + resolved) / total) * 100) + '%' : '0%';
+
+            // Update site distribution
+            const siteDistribution = document.getElementById('siteDistribution');
+            const siteCounts = {};
+            
+            complaints.forEach(complaint => {
+                siteCounts[complaint.site] = (siteCounts[complaint.site] || 0) + 1;
+            });
+
+            siteDistribution.innerHTML = Object.entries(siteCounts).map(([site, count]) => `
+                <div class="site-item">
+                    <span>${getSiteName(site)}</span>
+                    <span class="stat-count">${count}</span>
+                </div>
+            `).join('');
+        }
+
+        function updateStatus(complaintId, newStatus) {
+            const complaints = JSON.parse(localStorage.getItem('complaints')) || [];
+            const complaintIndex = complaints.findIndex(c => c.id === complaintId);
+            
+            if (complaintIndex !== -1) {
+                complaints[complaintIndex].status = newStatus;
+                complaints[complaintIndex].update = new Date().toISOString().split('T')[0];
+                localStorage.setItem('complaints', JSON.stringify(complaints));
+                loadComplaints();
+                
+                alert(`Complaint ${complaintId} status updated to ${newStatus.replace('-', ' ')}`);
+            }
+        }
+
+        function filterComplaints() {
+            loadComplaints();
+        }
+
+        function logout() {
+            localStorage.removeItem('staffLoggedIn');
+            localStorage.removeItem('staffId');
+            window.location.href = 'staff-login.html';
+        }
+
+        // Initial load
+        loadComplaints();
+    </script>
+</body>
+</html>
